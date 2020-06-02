@@ -34,15 +34,8 @@ public class Blackjack {
         dealerHand.addCard(dealerInitialCards[0]);
         dealerHand.addCard(dealerInitialCards[1]);
 
-        System.out.println(String.format("Player starts off with %s of %s and %s of %s (total hand value: %d), hit or stand?",
-                playerInitialCards[0].getType().getFriendlyName(), playerInitialCards[0].getSuit().getFriendlyName(),
-                playerInitialCards[1].getType().getFriendlyName(), playerInitialCards[1].getSuit().getFriendlyName(),
-                playerHand.getHandValue()));
-
-        System.out.println(String.format("Dealer starts off with %s of %s and %s of %s (total hand value: %d)",
-                dealerInitialCards[0].getType().getFriendlyName(), dealerInitialCards[0].getSuit().getFriendlyName(),
-                dealerInitialCards[1].getType().getFriendlyName(), dealerInitialCards[1].getSuit().getFriendlyName(),
-                dealerHand.getHandValue()));
+        System.out.println(generateStartingHandDrawnMessage(playerInitialCards, playerHand, false));
+        System.out.println(generateStartingHandDrawnMessage(dealerInitialCards, dealerHand, true));
 
         try {
 
@@ -57,11 +50,10 @@ public class Blackjack {
                         final Card card = deck.drawCard();
                         playerHand.addCard(card);
 
-                        if (playerHand.getHandValue() > 21) {
-                            System.out.println(String.format("You drew %s of %s and bust (%d)", card.getType().getFriendlyName(), card.getSuit().getFriendlyName(), playerHand.getHandValue()));
+                        System.out.println(generateHandDrawnMessage(card, playerHand, false));
+
+                        if (playerHand.getHandValue() > 21 && playerHand.getSoftHandValue() > 21) {
                             isStanding = true;
-                        } else {
-                            System.out.println(String.format("You drew %s of %s, you're currently at %d. Would you like to hit or stand?", card.getType().getFriendlyName(), card.getSuit().getFriendlyName(), playerHand.getHandValue()));
                         }
 
                     } else if (input.equalsIgnoreCase("stand")) {
@@ -70,18 +62,19 @@ public class Blackjack {
                     } else {
                         System.out.println(String.format("Invalid option: %s", input));
                     }
+
                 } else {
 
                     if (dealerHand.getHandValue() >= 17) {
                         if (dealerHand.getHandValue() == 21) {
-                            System.out.println(String.format("Dealer wins: %d", dealerHand.getHandValue()));
+                            System.out.println("Dealer Wins!");
                         } else {
-                            if (dealerHand.getHandValue() > 21 || dealerHand.getHandValue() < playerHand.getHandValue() && playerHand.isValidHand()) {
-                                System.out.println("Player wins");
-                            } else if (playerHand.getHandValue() > 21 || playerHand.getHandValue() < dealerHand.getHandValue() && dealerHand.isValidHand()) {
+                            if (!dealerHand.isValidHand() && !playerHand.isValidHand()) {
+                                System.out.println("Everyone bust, nobody wins!");
+                            } else if (dealerHand.getBetterHandValue() > playerHand.getBetterHandValue() && dealerHand.isValidHand()) {
                                 System.out.println("Dealer wins");
                             } else {
-                                System.out.println("Everyone bust!");
+                                System.out.println("Player wins");
                             }
                         }
                         break;
@@ -90,7 +83,7 @@ public class Blackjack {
                         final Card card = deck.drawCard();
                         dealerHand.addCard(card);
 
-                        System.out.println(String.format("Dealer drew %s of %s (%d)", card.getType().getFriendlyName(), card.getSuit().getFriendlyName(), dealerHand.getHandValue()));
+                        System.out.println(generateHandDrawnMessage(card, dealerHand, true));
 
                     }
 
@@ -103,6 +96,57 @@ public class Blackjack {
 
     }
 
+    public String generateStartingHandDrawnMessage(final Card[] cards, final Hand hand, boolean dealer) {
+        if (hand.getHandValue() > 21) {
+            return String.format("%s drew %s of %s and %s of %s giving %s a hand of %d",
+                    (dealer ? "Dealer" : "You"),
+                    cards[0].getType().getFriendlyName(), cards[0].getSuit().getFriendlyName(),
+                    cards[1].getType().getFriendlyName(), cards[1].getSuit().getFriendlyName(),
+                    (dealer ? "him" : "you"),
+                    hand.getSoftHandValue());
+        } else {
+            if (hand.getHandValue() != hand.getSoftHandValue()) {
+                return String.format("%s drew %s of %s and %s of %s giving %s %d (Soft %d)",
+                        (dealer ? "Dealer" : "You"),
+                        cards[0].getType().getFriendlyName(), cards[0].getSuit().getFriendlyName(),
+                        cards[1].getType().getFriendlyName(), cards[1].getSuit().getFriendlyName(),
+                        (dealer ? "him" : "you"),
+                        hand.getHandValue(),
+                        hand.getSoftHandValue());
+            } else {
+                return String.format("%s drew %s of %s and %s of %s giving %s %d",
+                        (dealer ? "Dealer" : "You"),
+                        cards[0].getType().getFriendlyName(), cards[0].getSuit().getFriendlyName(),
+                        cards[1].getType().getFriendlyName(), cards[1].getSuit().getFriendlyName(),
+                        (dealer ? "him" : "you"),
+                        hand.getHandValue());
+            }
+        }
+    }
 
+    public String generateHandDrawnMessage(final Card card, final Hand hand, boolean dealer) {
+        if (hand.getHandValue() > 21) {
+            if (hand.getSoftHandValue() > 21) {
+                return String.format("%s drew %s of %s and bust (%d)",
+                        (dealer ? "Dealer" : "You"),
+                        card.getType().getFriendlyName(), card.getSuit().getFriendlyName(),
+                        hand.getHandValue());
+            } else {
+                return String.format("%s drew %s of %s (%d)",
+                        (dealer ? "Dealer" : "You"),
+                        card.getType().getFriendlyName(), card.getSuit().getFriendlyName(), hand.getSoftHandValue());
+            }
+        } else {
+            if (hand.getHandValue() != hand.getSoftHandValue()) {
+                return String.format("%s drew %s of %s (%d, soft %d)",
+                        (dealer ? "Dealer" : "You"),
+                        card.getType().getFriendlyName(), card.getSuit().getFriendlyName(), hand.getHandValue(), hand.getSoftHandValue());
+            } else {
+                return String.format("%s drew %s of %s (%d)",
+                        (dealer ? "Dealer" : "You"),
+                        card.getType().getFriendlyName(), card.getSuit().getFriendlyName(), hand.getHandValue());
+            }
+        }
+    }
 
 }

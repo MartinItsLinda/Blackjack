@@ -79,6 +79,11 @@ fabric.properties
 # .idea/misc.xml
 # *.ipr
 
+./idea/.gitignore
+./idea/compiler.xml
+./idea/jarRepositories.xml
+./idea/misc.xml
+
 # Sonarlint plugin
 .idea/**/sonarlint/
 
@@ -88,6 +93,7 @@ fabric.properties
 # Markdown Navigator plugin
 .idea/**/markdown-navigator.xml
 .idea/**/markdown-navigator/
+
 
 ### Gradle ###
 .gradle

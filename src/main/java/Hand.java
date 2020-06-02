@@ -24,12 +24,24 @@ public class Hand {
         return this.hand.stream().mapToInt(card -> card.getType().getValue()).sum();
     }
 
+    public int getSoftHandValue() {
+        return this.hand.stream().mapToInt(card -> card.getType() == CardType.ACE ? 1 : card.getType().getValue()).sum();
+    }
+
+    public int getBetterHandValue() {
+
+        int hardValue = getHandValue();
+        int softValue = getHandValue();
+
+        return hardValue > 21 ? getSoftHandValue() > 21 ? -1 : softValue : hardValue;
+    }
+
     public void addCard(final Card card) {
         this.hand.add(card);
     }
 
     public boolean isValidHand() {
-        return this.getHandValue() <= 21;
+        return this.getHandValue() <= 21 || this.getSoftHandValue() <= 21;
     }
 
 }

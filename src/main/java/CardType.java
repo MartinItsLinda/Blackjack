@@ -1,6 +1,6 @@
 public enum CardType {
 
-    ACE("Ace", 1),
+    ACE("Ace", 11),
     TWO("Two", 2),
     THREE("Three", 3),
     FOUR("Four", 4),

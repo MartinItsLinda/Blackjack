@@ -32,6 +32,16 @@ public class Deck {
         return this.deck.remove(0);
     }
 
+    public Card drawCard(final CardType type) {
+
+        Card card;
+        do {
+            card = drawCard();
+        } while (card.getType() != type);
+
+        return card;
+    }
+
     public Card[] drawCards(final int cards) {
         if (cards < 1) throw new IllegalArgumentException("Cannot draw less than 1 card");
 
