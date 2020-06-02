@@ -8,8 +8,9 @@ public class Blackjack {
 
     public static void main(String[] args) {
 
+        final Blackjack blackjack = new Blackjack();
         try (final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            new Blackjack().start(reader);
+            blackjack.start(reader);
         } catch (final IOException ex) {
             System.err.println("Couldn't close reader: " + ex.getMessage());
         }
@@ -65,8 +66,8 @@ public class Blackjack {
 
                 } else {
 
-                    if (dealerHand.getHandValue() >= 17) {
-                        if (dealerHand.getHandValue() == 21) {
+                    if (dealerHand.getBetterHandValue() >= 17) {
+                        if (dealerHand.getBetterHandValue() == 21) {
                             System.out.println("Dealer Wins!");
                         } else {
                             if (!dealerHand.isValidHand() && !playerHand.isValidHand()) {
