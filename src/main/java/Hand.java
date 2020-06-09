@@ -4,16 +4,10 @@ import java.util.List;
 
 public class Hand {
 
-    private long userId;
-    private List<Card> hand;
+    private final List<Card> hand;
 
-    public Hand(final long userId) {
-        this.userId = userId;
+    public Hand() {
         this.hand = new ArrayList<>();
-    }
-
-    public long getUserId() {
-        return this.userId;
     }
 
     public List<Card> getHand() {
@@ -33,7 +27,7 @@ public class Hand {
         int hardValue = getHandValue();
         int softValue = getHandValue();
 
-        return hardValue > 21 ? getSoftHandValue() > 21 ? -1 : softValue : hardValue;
+        return hardValue > 21 ? getSoftHandValue() > 21 ? hardValue : softValue : hardValue;
     }
 
     public void addCard(final Card card) {
@@ -41,7 +35,7 @@ public class Hand {
     }
 
     public boolean isValidHand() {
-        return this.getHandValue() <= 21 || this.getSoftHandValue() <= 21;
+        return this.getBetterHandValue() != -1;
     }
 
 }
